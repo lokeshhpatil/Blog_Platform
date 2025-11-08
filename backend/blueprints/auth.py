@@ -4,6 +4,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token,jwt_required,get_jwt_identity
 import datetime
 from bson.objectid import ObjectId
+import hashlib
+import hmac
+import secrets
 
 auth_bp = Blueprint("auth",__name__)
 
@@ -63,3 +66,15 @@ def me():
     user["id"] = str(user["_id"])
     user.pop("_id", None)
     return jsonify(user)
+
+
+def _hash_token(raw_token:str)->str:
+    return hashlib.sha256(raw_token.encode("utf-8")).hexdigest()
+
+def _compare_hashesh(a:str,b:str)->bool:
+    return hmac.compare_digest(a,b)
+
+def generate_token(length:int=32)->str:
+    return secrets.token_hex(length)
+
+
