@@ -112,18 +112,16 @@ def create_post():
 def list_posts():
     page = int(request.args.get("page", 1))
     per_page = int(request.args.get("per_page", 10))
-    skip = (page - 1) * per_page
-    cursor = mongo.db.posts.find().sort("created_at", -1).skip(skip).limit(per_page)
-    current_user_id = get_jwt_identity() # Might be None if not logged in, but wait, this route is public?
-    # Actually list_posts is public, so we need to handle optional auth if we want to show "is_liked" correctly for logged in users.
-    # But @jwt_required(optional=True) is needed. For now, let's assume public or check header manually if we want.
-    # Or better, just return the list and let frontend handle "is_liked" logic if we don't want to complicate this public endpoint with optional auth yet.
-    # However, standard practice is to return "is_liked".
-    # Let's add @jwt_required(optional=True) to list_posts if we can. 
-    # Since I cannot easily change the decorator order without replacing the whole function signature, I will check the header manually or just return the count.
-    # Let's just return the count for now to be safe and simple.
+    author_id = request.args.get("author_id")
     
-    # Wait, I can use verify_jwt_in_request(optional=True) inside the function if I import it.
+    query = {}
+    if author_id:
+        query["author_id"] = author_id
+
+    skip = (page - 1) * per_page
+    cursor = mongo.db.posts.find(query).sort("created_at", -1).skip(skip).limit(per_page)
+    
+    # Check for optional auth to determine "is_liked" status
     from flask_jwt_extended import verify_jwt_in_request
     try:
         verify_jwt_in_request(optional=True)
@@ -138,7 +136,18 @@ def list_posts():
         likes = p.get("likes", [])
         p["likes_count"] = len(likes)
         p["is_liked"] = current_user_id in likes if current_user_id else False
-        # p.pop("likes", None) # Optional: hide the list of user ids
+        
+        # Populate author
+        author_id = p.get("author_id")
+        if author_id:
+            try:
+                author = mongo.db.users.find_one({"_id": ObjectId(author_id)})
+                p["author"] = {"id": str(author_id), "username": author.get("username")} if author else {"id": str(author_id), "username": "Unknown"}
+            except Exception:
+                p["author"] = {"id": str(author_id), "username": "Unknown"}
+        else:
+            p["author"] = {"id": None, "username": "Unknown"}
+
         posts.append(p)
     return jsonify({"posts": posts, "page": page})
 
@@ -164,6 +173,14 @@ def get_post(post_id):
     likes = p.get("likes", [])
     p["likes_count"] = len(likes)
     p["is_liked"] = current_user_id in likes if current_user_id else False
+
+    # Populate author
+    author_id = p.get("author_id")
+    if author_id:
+        author = mongo.db.users.find_one({"_id": ObjectId(author_id)})
+        p["author"] = {"id": str(author_id), "username": author.get("username")} if author else {"id": str(author_id), "username": "Unknown"}
+    else:
+        p["author"] = {"id": None, "username": "Unknown"}
     
     return jsonify(p)
 
