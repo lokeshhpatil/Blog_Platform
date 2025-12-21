@@ -10,7 +10,6 @@ from extensions import mongo
 
 posts_bp = Blueprint("posts", __name__)
 
-
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -99,14 +98,14 @@ def create_post():
         "tags": tags,
         "image": image_meta,
         "created_at": datetime.datetime.utcnow(),
-        "updated_at": None
+        "updated_at": None,
+        "likes": []
     }
     res = mongo.db.posts.insert_one(post)
     post_id = str(res.inserted_id)
     post["id"] = post_id
     post.pop("_id", None)
     return jsonify(post), 201 
-
 
 ##GET LIST OF POSTS
 @posts_bp.route("/", methods=["GET"])
@@ -115,10 +114,31 @@ def list_posts():
     per_page = int(request.args.get("per_page", 10))
     skip = (page - 1) * per_page
     cursor = mongo.db.posts.find().sort("created_at", -1).skip(skip).limit(per_page)
+    current_user_id = get_jwt_identity() # Might be None if not logged in, but wait, this route is public?
+    # Actually list_posts is public, so we need to handle optional auth if we want to show "is_liked" correctly for logged in users.
+    # But @jwt_required(optional=True) is needed. For now, let's assume public or check header manually if we want.
+    # Or better, just return the list and let frontend handle "is_liked" logic if we don't want to complicate this public endpoint with optional auth yet.
+    # However, standard practice is to return "is_liked".
+    # Let's add @jwt_required(optional=True) to list_posts if we can. 
+    # Since I cannot easily change the decorator order without replacing the whole function signature, I will check the header manually or just return the count.
+    # Let's just return the count for now to be safe and simple.
+    
+    # Wait, I can use verify_jwt_in_request(optional=True) inside the function if I import it.
+    from flask_jwt_extended import verify_jwt_in_request
+    try:
+        verify_jwt_in_request(optional=True)
+        current_user_id = get_jwt_identity()
+    except:
+        current_user_id = None
+
     posts = []
     for p in cursor:
         p["id"] = str(p["_id"])
         p.pop("_id", None)
+        likes = p.get("likes", [])
+        p["likes_count"] = len(likes)
+        p["is_liked"] = current_user_id in likes if current_user_id else False
+        # p.pop("likes", None) # Optional: hide the list of user ids
         posts.append(p)
     return jsonify({"posts": posts, "page": page})
 
@@ -133,6 +153,18 @@ def get_post(post_id):
         return jsonify({"msg": "not found"}), 404
     p["id"] = str(p["_id"])
     p.pop("_id", None)
+    
+    from flask_jwt_extended import verify_jwt_in_request
+    try:
+        verify_jwt_in_request(optional=True)
+        current_user_id = get_jwt_identity()
+    except:
+        current_user_id = None
+        
+    likes = p.get("likes", [])
+    p["likes_count"] = len(likes)
+    p["is_liked"] = current_user_id in likes if current_user_id else False
+    
     return jsonify(p)
 
 
@@ -251,7 +283,6 @@ def update_post(post_id):
     updated.pop("_id", None)
     return jsonify(updated), 200
 
-
 @posts_bp.route("/<post_id>", methods=["DELETE"])
 @jwt_required()
 def delete_post(post_id):
@@ -282,10 +313,7 @@ def delete_post(post_id):
 
     return jsonify({"msg": "deleted"}), 200
 
-
 ##SEARCH
-
-# returns top N search results using MongoDB text search, default top 5
 @posts_bp.route("/search_top", methods=["GET"])
 def search_top():
     """
@@ -361,5 +389,123 @@ def search_top():
         except Exception as e2:
             current_app.logger.exception("Search fallback failed: %s", e2)
             return jsonify({"results": []}), 500
-      
+
+
+## COMMENTS
+
+@posts_bp.route("/<post_id>/comments", methods=["POST"])
+@jwt_required()
+def add_comment(post_id):
+    user_id = get_jwt_identity()
+    data = request.get_json() or {}
+    body = (data.get("body") or "").strip()
+
+    if not body:
+        return jsonify({"msg": "comment body required"}), 400
+
+    try:
+        post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
+    except:
+        return jsonify({"msg": "invalid post id"}), 400
     
+    if not post:
+        return jsonify({"msg": "post not found"}), 404
+
+    comment = {
+        "post_id": ObjectId(post_id),
+        "author_id": user_id,
+        "body": body,
+        "created_at": datetime.datetime.utcnow()
+    }
+
+    res = mongo.db.comments.insert_one(comment)
+    
+    # Fetch user details to return with comment
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    
+    return jsonify({
+        "id": str(res.inserted_id),
+        "body": body,
+        "author": {
+            "id": user_id,
+            "username": user.get("username") if user else "Unknown"
+        },
+        "created_at": comment["created_at"]
+    }), 201
+
+@posts_bp.route("/<post_id>/comments", methods=["GET"])
+def get_comments(post_id):
+    try:
+        # verify post exists first (optional but good for 404)
+        if not mongo.db.posts.find_one({"_id": ObjectId(post_id)}):
+             return jsonify({"msg": "post not found"}), 404
+             
+        cursor = mongo.db.comments.find({"post_id": ObjectId(post_id)}).sort("created_at", -1)
+        comments = []
+        
+        for c in cursor:
+            author_id = c.get("author_id")
+            user = mongo.db.users.find_one({"_id": ObjectId(author_id)})
+            comments.append({
+                "id": str(c["_id"]),
+                "body": c.get("body"),
+                "author": {
+                    "id": str(author_id),
+                    "username": user.get("username") if user else "Unknown"
+                },
+                "created_at": c.get("created_at")
+            })
+            
+        return jsonify(comments), 200
+    except Exception as e:
+        return jsonify({"msg": "invalid id"}), 400
+
+@posts_bp.route("/<post_id>/comments/<comment_id>", methods=["DELETE"])
+@jwt_required()
+def delete_comment(post_id, comment_id):
+    user_id = get_jwt_identity()
+    try:
+        comment = mongo.db.comments.find_one({"_id": ObjectId(comment_id), "post_id": ObjectId(post_id)})
+    except:
+         return jsonify({"msg": "invalid id"}), 400
+         
+    if not comment:
+        return jsonify({"msg": "comment not found"}), 404
+        
+    if str(comment.get("author_id")) != str(user_id):
+        return jsonify({"msg": "forbidden"}), 403
+
+    mongo.db.comments.delete_one({"_id": ObjectId(comment_id)})
+    return jsonify({"msg": "deleted"}), 200
+
+
+## LIKES
+
+@posts_bp.route("/<post_id>/like", methods=["POST"])
+@jwt_required()
+def toggle_like(post_id):
+    user_id = get_jwt_identity()
+    try:
+        post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
+    except:
+        return jsonify({"msg": "invalid id"}), 400
+        
+    if not post:
+        return jsonify({"msg": "post not found"}), 404
+        
+    likes = post.get("likes") or []
+    
+    if user_id in likes:
+        # Unlike
+        mongo.db.posts.update_one({"_id": ObjectId(post_id)}, {"$pull": {"likes": user_id}})
+        liked = False
+    else:
+        # Like
+        mongo.db.posts.update_one({"_id": ObjectId(post_id)}, {"$addToSet": {"likes": user_id}})
+        liked = True
+        
+    # Return new count
+    updated_post = mongo.db.posts.find_one({"_id": ObjectId(post_id)})
+    new_count = len(updated_post.get("likes", []))
+    
+    return jsonify({"liked": liked, "likes_count": new_count}), 200
