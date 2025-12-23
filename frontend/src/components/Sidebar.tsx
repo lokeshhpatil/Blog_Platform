@@ -7,13 +7,17 @@ export function Sidebar() {
     <aside className="space-y-12">
       {/* About Widget */}
       <div className="text-center">
-        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">About</h3>
-        <div className="bg-secondary aspect-square w-32 mx-auto mb-4 rounded-full flex items-center justify-center text-muted-foreground">
-           {/* Placeholder for author image */}
-           <span className="text-xs uppercase tracking-widest">Photo</span>
+        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">About Me</h3>
+        <div className="mx-auto mb-4 w-32 h-32 rounded-full overflow-hidden bg-secondary">
+           <img 
+             src="/author_avatar.png" 
+             alt="Author" 
+             className="w-full h-full object-cover"
+           />
         </div>
+        <h4 className="text-lg font-serif font-bold mb-2">Editor's Note</h4>
         <p className="text-sm text-muted-foreground font-serif leading-relaxed mb-6 italic">
-          "Sharing stories that matter, from design to culture and everything in between."
+          "Sharing stories that matter, from design to culture and everything in between. This space is dedicated to thoughtful narratives."
         </p>
       </div>
 
@@ -28,20 +32,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Newsletter Widget */}
-      <div className="bg-foreground text-background p-8 text-center rounded-xl">
-        <h3 className="text-xs font-bold tracking-widest uppercase mb-2">Newsletter</h3>
-        <p className="text-xs text-background/60 mb-6 font-serif">Get weekly inspiration delivered to your inbox.</p>
-        <form className="space-y-4">
-          <Input 
-            placeholder="Your Email" 
-            className="bg-background/10 border-background/20 text-background placeholder:text-background/50 text-center text-sm focus:bg-background/20 transition-colors" 
-          />
-          <Button className="w-full bg-background text-foreground hover:bg-background/90 text-xs font-bold tracking-widest uppercase">
-            Subscribe
-          </Button>
-        </form>
-      </div>
+
 
       {/* Categories Widget */}
       <div>
