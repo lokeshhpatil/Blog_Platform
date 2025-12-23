@@ -8,6 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import { FiHeart, FiMessageSquare, FiShare2, FiUser, FiTrash2, FiBookmark } from "react-icons/fi";
 import { CommentsSection } from "@/components/CommentsSection";
+import { relativeDate } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
 
@@ -43,8 +44,8 @@ export default function PostDetailPage() {
   if (isLoading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground animate-pulse">Loading Story...</div>;
   if (!post) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Story not found</div>;
 
-  const authorName = typeof post.author === 'object' ? post.author.username : 'Unknown';
-  const authorId = typeof post.author === 'object' ? post.author.id : post.author;
+  const authorName = post.author && typeof post.author === 'object' ? post.author.username : 'Unknown';
+  const authorId = typeof post.author === 'object' && post.author ? post.author.id : post.author;
   const isAuthor = user && user.id === authorId;
   const imageUrl = post.image?.url;
 
@@ -68,14 +69,8 @@ export default function PostDetailPage() {
              <div className="flex flex-col">
                <span className="font-medium text-foreground text-sm">{authorName}</span>
                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                 <time dateTime={post.created_at}>
-                  {(() => {
-                    try {
-                      return formatDistanceToNow(new Date(post.created_at), { addSuffix: true });
-                    } catch (e) {
-                      return "Just now";
-                    }
-                  })()}
+                 <time dateTime={post.created_at?.toString()}>
+                  {relativeDate(post.created_at)}
                  </time>
                  <span>•</span>
                  <span>5 min read</span>

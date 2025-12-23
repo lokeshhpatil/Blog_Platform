@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Post } from "@/types";
 import { FiArrowRight } from "react-icons/fi";
+import { formatDate } from "@/lib/utils";
 
 interface HeroPostProps {
   post: Post;
 }
 
 export function HeroPost({ post }: HeroPostProps) {
-  const authorName = typeof post.author === 'object' ? post.author.username : 'Unknown';
+  const authorName = post.author && typeof post.author === 'object' ? post.author.username : 'Unknown';
   const imageUrl = post.image?.url;
 
   return (
@@ -44,14 +45,14 @@ export function HeroPost({ post }: HeroPostProps) {
            <div className="flex items-center gap-4 text-sm font-medium text-muted-foreground">
              <span>{authorName}</span>
              <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
-             <time dateTime={post.created_at}>
-               {new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+             <time dateTime={post.created_at?.toString()}>
+               {formatDate(post.created_at)}
              </time>
            </div>
 
-           <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3 font-serif max-w-md">
+           <div className="text-muted-foreground text-lg leading-relaxed line-clamp-3 font-serif max-w-md">
              {post.body}
-           </p>
+           </div>
 
            <Link href={`/posts/${post.id}`} className="mt-4 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest border-b border-foreground pb-1 hover:text-accent-color hover:border-accent-color transition-colors">
              Read Story <FiArrowRight />
@@ -61,3 +62,4 @@ export function HeroPost({ post }: HeroPostProps) {
     </section>
   );
 }
+
