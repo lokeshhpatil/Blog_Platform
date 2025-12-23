@@ -10,7 +10,7 @@ export function Sidebar() {
         <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">About Me</h3>
         <div className="mx-auto mb-4 w-32 h-32 rounded-full overflow-hidden bg-secondary">
            <img 
-             src="/author_avatar.png" 
+             src="/author_avatar.jpg" 
              alt="Author" 
              className="w-full h-full object-cover"
            />

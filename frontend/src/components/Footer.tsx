@@ -14,8 +14,8 @@ export function Footer() {
         <nav className="flex flex-wrap justify-center gap-8 text-sm font-medium text-muted-foreground">
           <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
           <Link href="/posts" className="hover:text-foreground transition-colors">Stories</Link>
-          <Link href="#" className="hover:text-foreground transition-colors">About</Link>
-          <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
+          <Link href="/about" className="hover:text-foreground transition-colors">About</Link>
+          <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
         </nav>
 
         {/* Socials */}
