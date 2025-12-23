@@ -1,2 +1,4 @@
 .env
 blueprints/__pycache__/posts.cpython-313.pyc
+
+.vercel
