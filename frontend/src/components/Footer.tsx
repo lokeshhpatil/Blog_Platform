@@ -1,64 +1,34 @@
 import Link from "next/link";
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaGithub, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 
 export function Footer() {
   return (
-    <footer className="bg-black text-white pt-20 pb-10 mt-auto">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Brand Column */}
-          <div className="space-y-6">
-            <Link href="/" className="text-2xl font-black tracking-tighter uppercase font-serif block">
-              NARRATIVE
-            </Link>
-            <p className="text-gray-400 text-sm leading-relaxed font-serif">
-              A minimal platform for storytellers. We believe in the power of words and the beauty of simplicity.
-            </p>
-          </div>
+    <footer className="w-full border-t border-border bg-background py-16 mt-auto">
+      <div className="container mx-auto px-4 flex flex-col items-center text-center gap-8">
+        {/* Minimal Logo */}
+        <Link href="/" className="text-2xl font-serif font-bold tracking-tight">
+          NARRATIVE.
+        </Link>
+        
+        {/* Navigation Links */}
+        <nav className="flex flex-wrap justify-center gap-8 text-sm font-medium text-muted-foreground">
+          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+          <Link href="/posts" className="hover:text-foreground transition-colors">Stories</Link>
+          <Link href="#" className="hover:text-foreground transition-colors">About</Link>
+          <Link href="#" className="hover:text-foreground transition-colors">Privacy</Link>
+        </nav>
 
-          {/* Explore Column */}
-          <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase mb-6 text-gray-500">Explore</h4>
-            <ul className="space-y-4 text-sm font-bold tracking-wide uppercase">
-              <li><Link href="/" className="hover:text-gray-400 transition-colors">Home</Link></li>
-              <li><Link href="/posts" className="hover:text-gray-400 transition-colors">Latest Stories</Link></li>
-            </ul>
-          </div>
-
-          {/* Connect Column */}
-          <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase mb-6 text-gray-500">Connect</h4>
-            <ul className="space-y-4 text-sm font-bold tracking-wide uppercase">
-              <li><Link href="https://www.instagram.com/lokesh_p.03/" className="hover:text-gray-400 transition-colors">Instagram</Link></li>
-              <li><Link href="https://x.com/LokeshP66704936" className="hover:text-gray-400 transition-colors">Twitter</Link></li>
-              <li><Link href="https://www.facebook.com/profile.php?id=100069708436659" className="hover:text-gray-400 transition-colors">Facebook</Link></li>
-              <li><Link href="https://www.linkedin.com/in/lokeshhpatil" className="hover:text-gray-400 transition-colors">LinkedIn</Link></li>
-            </ul>
-          </div>
-
-          {/* Legal Column */}
-          <div>
-            <h4 className="text-xs font-bold tracking-widest uppercase mb-6 text-gray-500">Legal</h4>
-            <ul className="space-y-4 text-sm font-bold tracking-wide uppercase">
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Terms of Service</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Cookie Policy</Link></li>
-            </ul>
-          </div>
+        {/* Socials */}
+        <div className="flex items-center gap-6 text-muted-foreground">
+          <a href="#" className="hover:text-foreground transition-colors p-2"><FaTwitter size={20} /></a>
+          <a href="#" className="hover:text-foreground transition-colors p-2"><FaLinkedinIn size={20} /></a>
+          <a href="#" className="hover:text-foreground transition-colors p-2"><FaGithub size={20} /></a>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 uppercase tracking-widest">
-          <div>
-            &copy; {new Date().getFullYear()} NARRATIVE. All rights reserved.
-          </div>
-          <div className="flex gap-6">
-            <a href="https://www.facebook.com/profile.php?id=100069708436659" className="hover:text-white transition-colors"><FaFacebookF /></a>
-            <a href="https://x.com/LokeshP66704936" className="hover:text-white transition-colors"><FaTwitter /></a>
-            <a href="https://www.instagram.com/lokesh_p.03/" className="hover:text-white transition-colors"><FaInstagram /></a>
-            <a href="https://www.linkedin.com/in/lokeshhpatil" className="hover:text-white transition-colors"><FaLinkedinIn /></a>
-          </div>
-        </div>
+        {/* Copyright */}
+        <p className="text-xs text-muted-foreground/60">
+          &copy; {new Date().getFullYear()} Narrative Blog Platform. All rights reserved.
+        </p>
       </div>
     </footer>
   );

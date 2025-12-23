@@ -1,10 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "./ui/Button";
 import { useState } from "react";
-import { FiMenu, FiX, FiSearch, FiUser } from "react-icons/fi";
-import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FiMenu, FiX, FiSearch, FiUser, FiLogOut, FiEdit3 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 
 export function Header() {
@@ -22,81 +20,96 @@ export function Header() {
     }
   };
 
+  const navItems = [
+    { label: "Home", href: "/" },
+    { label: "Design", href: "/search?q=Design" }, // Example categories
+    { label: "Culture", href: "/search?q=Culture" },
+  ];
+
   return (
-    <header className="w-full bg-background text-foreground">
-      {/* Top Bar */}
-      <div className="container mx-auto px-4 h-12 flex items-center justify-between border-b border-border text-xs uppercase tracking-widest">
-        <div className="flex items-center gap-4">
-          <a href="#" className="hover:text-muted-foreground transition-colors"><FaFacebookF /></a>
-          <a href="#" className="hover:text-muted-foreground transition-colors"><FaTwitter /></a>
-          <a href="#" className="hover:text-muted-foreground transition-colors"><FaInstagram /></a>
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+        
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 -ml-2 hover:bg-muted rounded-full">
+            {isMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
         </div>
-        <div className="hidden md:block text-muted-foreground">
-          The Art of Storytelling
+
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+           <Link href="/" className="text-xl font-bold tracking-tight font-serif">
+             NARRATIVE.
+           </Link>
         </div>
-        <div className="flex items-center gap-4">
-           {user ? (
-             <button onClick={logout} className="hover:text-muted-foreground transition-colors">Sign Out</button>
-           ) : (
-             <Link href="/login" className="hover:text-muted-foreground transition-colors">Sign In</Link>
-           )}
-           <button onClick={() => setIsSearchOpen(!isSearchOpen)} className="hover:text-muted-foreground transition-colors">
-             {isSearchOpen ? <FiX size={14} /> : <FiSearch size={14} />}
-           </button>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
+          <Link href="/" className="hover:text-foreground transition-colors">Home</Link>
+          <Link href="/posts" className="hover:text-foreground transition-colors">Stories</Link>
+          {user && (
+             <Link href="/create" className="hover:text-foreground transition-colors">Write</Link>
+          )}
+        </nav>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-2">
+          {/* Search Toggle */}
+          <button 
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
+          >
+            <FiSearch size={20} />
+          </button>
+
+          {/* Auth Actions */}
+          {user ? (
+            <div className="flex items-center gap-2 pl-2 border-l border-border ml-2">
+               <Link href="/create" className="hidden md:flex p-2 hover:bg-muted rounded-full text-muted-foreground hover:text-foreground" title="Write a story">
+                 <FiEdit3 size={20} />
+               </Link>
+               <button onClick={logout} className="p-2 hover:bg-muted rounded-full text-muted-foreground hover:text-destructive transition-colors" title="Sign out">
+                 <FiLogOut size={20} />
+               </button>
+            </div>
+          ) : (
+            <Link href="/login" className="ml-2 text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:opacity-90 transition-opacity">
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Search Bar Overlay */}
+      {/* Search Overlay - Minimal */}
       {isSearchOpen && (
-        <div className="border-b border-border bg-secondary/30 animate-in slide-in-from-top-2">
-          <div className="container mx-auto px-4 py-4">
-            <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
-              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input 
-                type="text" 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search stories..." 
-                className="w-full bg-background border border-border rounded-full pl-12 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-black"
-                autoFocus
-              />
-            </form>
-          </div>
+        <div className="absolute top-16 left-0 w-full bg-background border-b border-border p-4 animate-in slide-in-from-top-2 shadow-lg">
+           <form onSubmit={handleSearch} className="container mx-auto max-w-2xl relative">
+             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+             <input 
+               autoFocus
+               type="text" 
+               placeholder="Search stories, topics, or authors..." 
+               className="w-full bg-secondary/50 rounded-full py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+               value={searchQuery}
+               onChange={(e) => setSearchQuery(e.target.value)}
+             />
+           </form>
         </div>
       )}
 
-      {/* Main Header */}
-      <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center gap-6 relative">
-        {/* Logo */}
-        <Link href="/" className="text-5xl font-black tracking-tighter uppercase font-serif">
-          NARRATIVE
-        </Link>
-        
-        {/* Mobile Menu Toggle */}
-        <button className="absolute right-4 top-8 md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-        </button>
-
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-widest">
-          <Link href="/" className="hover:text-muted-foreground transition-colors">Home</Link>
-          <Link href="/posts" className="hover:text-muted-foreground transition-colors">Posts</Link>
-          {user && (
-             <Link href="/create" className="hover:text-muted-foreground transition-colors">Write</Link>
-          )}
-        </nav>
-      </div>
-
-      {/* Mobile Menu */}
+      {/* Mobile Nav Dropdown */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border p-4 bg-background absolute w-full z-50 shadow-xl">
-          <nav className="flex flex-col gap-4 text-sm font-bold uppercase tracking-widest text-center">
-            <Link href="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
-            <Link href="/posts" onClick={() => setIsMenuOpen(false)}>Posts</Link>
+        <div className="md:hidden fixed inset-0 top-16 bg-background z-40 p-6 animate-in slide-in-from-left-5">
+          <nav className="flex flex-col gap-6 text-lg font-medium">
+            <Link href="/" onClick={() => setIsMenuOpen(false)} className="border-b border-border pb-2">Home</Link>
+            <Link href="/posts" onClick={() => setIsMenuOpen(false)} className="border-b border-border pb-2">Latest Stories</Link>
             {user && (
-               <Link href="/create" onClick={() => setIsMenuOpen(false)}>Write</Link>
+               <Link href="/create" onClick={() => setIsMenuOpen(false)} className="border-b border-border pb-2 text-primary">Write a Story</Link>
             )}
-            <Link href="/login" onClick={() => setIsMenuOpen(false)}>Sign In</Link>
+            {!user && (
+               <Link href="/login" onClick={() => setIsMenuOpen(false)} className="border-b border-border pb-2">Sign In</Link>
+            )}
           </nav>
         </div>
       )}

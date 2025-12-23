@@ -7,46 +7,62 @@ export function Sidebar() {
     <aside className="space-y-12">
       {/* About Widget */}
       <div className="text-center">
-        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-black inline-block">About Me</h3>
-        <div className="bg-gray-100 aspect-square mb-4">
+        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">About</h3>
+        <div className="bg-secondary aspect-square w-32 mx-auto mb-4 rounded-full flex items-center justify-center text-muted-foreground">
            {/* Placeholder for author image */}
-           <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs uppercase tracking-widest">Author Image</div>
+           <span className="text-xs uppercase tracking-widest">Photo</span>
         </div>
-        <p className="text-sm text-gray-600 font-serif leading-relaxed mb-4">
-          Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim.
+        <p className="text-sm text-muted-foreground font-serif leading-relaxed mb-6 italic">
+          "Sharing stories that matter, from design to culture and everything in between."
         </p>
-        <img src="/signature.png" alt="" className="h-8 mx-auto opacity-50" /> 
       </div>
 
       {/* Social Widget */}
       <div className="text-center">
-        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-black inline-block">Follow Me</h3>
-        <div className="flex justify-center gap-6 text-gray-600">
-          <a href="#" className="hover:text-black transition-colors"><FaFacebookF /></a>
-          <a href="#" className="hover:text-black transition-colors"><FaTwitter /></a>
-          <a href="#" className="hover:text-black transition-colors"><FaInstagram /></a>
-          <a href="#" className="hover:text-black transition-colors"><FaPinterest /></a>
+        <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">Follow</h3>
+        <div className="flex justify-center gap-6 text-muted-foreground">
+          <a href="#" className="hover:text-foreground transition-colors"><FaFacebookF /></a>
+          <a href="#" className="hover:text-foreground transition-colors"><FaTwitter /></a>
+          <a href="#" className="hover:text-foreground transition-colors"><FaInstagram /></a>
+          <a href="#" className="hover:text-foreground transition-colors"><FaPinterest /></a>
         </div>
       </div>
 
       {/* Newsletter Widget */}
-      <div className="bg-black text-white p-8 text-center">
+      <div className="bg-foreground text-background p-8 text-center rounded-xl">
         <h3 className="text-xs font-bold tracking-widest uppercase mb-2">Newsletter</h3>
-        <p className="text-xs text-gray-400 mb-6">Subscribe to my newsletter</p>
+        <p className="text-xs text-background/60 mb-6 font-serif">Get weekly inspiration delivered to your inbox.</p>
         <form className="space-y-4">
-          <Input placeholder="Your Email" className="bg-white/10 border-white/20 text-white placeholder:text-gray-500 text-center text-xs" />
-          <Button className="w-full bg-white text-black hover:bg-gray-200 text-xs font-bold tracking-widest uppercase">Subscribe</Button>
+          <Input 
+            placeholder="Your Email" 
+            className="bg-background/10 border-background/20 text-background placeholder:text-background/50 text-center text-sm focus:bg-background/20 transition-colors" 
+          />
+          <Button className="w-full bg-background text-foreground hover:bg-background/90 text-xs font-bold tracking-widest uppercase">
+            Subscribe
+          </Button>
         </form>
       </div>
 
       {/* Categories Widget */}
       <div>
-         <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-black inline-block">Categories</h3>
-         <ul className="space-y-3 text-sm text-gray-600 font-serif">
-           <li className="flex justify-between hover:text-black cursor-pointer"><span>Lifestyle</span> <span className="text-gray-400">(23)</span></li>
-           <li className="flex justify-between hover:text-black cursor-pointer"><span>Travel</span> <span className="text-gray-400">(14)</span></li>
-           <li className="flex justify-between hover:text-black cursor-pointer"><span>Fashion</span> <span className="text-gray-400">(8)</span></li>
-           <li className="flex justify-between hover:text-black cursor-pointer"><span>Photography</span> <span className="text-gray-400">(5)</span></li>
+         <h3 className="text-xs font-bold tracking-widest uppercase mb-6 pb-2 border-b border-foreground/10 inline-block text-muted-foreground">Topics</h3>
+         <ul className="space-y-3 text-sm font-medium text-muted-foreground">
+           <li className="flex justify-between hover:text-foreground cursor-pointer transition-colors group">
+             <span className="group-hover:translate-x-1 transition-transform">Design</span> 
+             <span className="text-muted-foreground/50">04</span>
+           </li>
+           <li className="flex justify-between hover:text-foreground cursor-pointer transition-colors group">
+             <span className="group-hover:translate-x-1 transition-transform">Culture</span> 
+             <span className="text-muted-foreground/50">12</span>
+           </li>
+           <li className="flex justify-between hover:text-foreground cursor-pointer transition-colors group">
+             <span className="group-hover:translate-x-1 transition-transform">Technology</span> 
+             <span className="text-muted-foreground/50">08</span>
+           </li>
+           <li className="flex justify-between hover:text-foreground cursor-pointer transition-colors group">
+             <span className="group-hover:translate-x-1 transition-transform">Travel</span> 
+             <span className="text-muted-foreground/50">21</span>
+           </li>
          </ul>
       </div>
     </aside>

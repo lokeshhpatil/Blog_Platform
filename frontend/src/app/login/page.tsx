@@ -29,57 +29,55 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center py-20 px-4">
+      <div className="w-full max-w-md space-y-10">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Or{" "}
-            <Link href="/register" className="font-medium text-primary hover:text-primary/90">
-              create a new account
-            </Link>
+          <h1 className="text-4xl font-serif font-bold tracking-tight text-foreground">
+            Welcome Back
+          </h1>
+          <p className="mt-4 text-sm text-muted-foreground uppercase tracking-widest">
+            Sign in to continue your journey
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
+              <label htmlFor="email" className="sr-only">Email</label>
               <Input
-                id="email-address"
-                name="email"
+                id="email"
                 type="email"
-                autoComplete="email"
                 required
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
+                autoFocus
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
+              <label htmlFor="password" className="sr-only">Password</label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="current-password"
                 required
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
               />
             </div>
           </div>
 
-          <div>
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-              Sign in
-            </Button>
+          <Button type="submit" className="w-full h-12 text-sm uppercase tracking-widest font-bold" isLoading={isLoading}>
+            Sign In
+          </Button>
+
+          <div className="text-center text-sm text-muted-foreground">
+            Don't have an account?{" "}
+            <Link href="/register" className="font-bold text-foreground hover:underline underline-offset-4">
+              Join Narrative
+            </Link>
           </div>
         </form>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import api from "@/lib/api";
@@ -10,9 +11,11 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,8 +23,8 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await api.post("/auth/register", { username, email, password });
-      toast.success("Account created! Please log in.");
+      await api.post("/auth/register", formData);
+      toast.success("Account created successfully. Please login.");
       router.push("/login");
     } catch (error: any) {
       toast.error(error.response?.data?.msg || "Registration failed");
@@ -31,72 +34,67 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex min-h-[calc(100vh-16rem)] items-center justify-center py-20 px-4">
+      <div className="w-full max-w-md space-y-10">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Create your account
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium text-primary hover:text-primary/90">
-              Sign in
-            </Link>
+          <h1 className="text-4xl font-serif font-bold tracking-tight text-foreground">
+            Join Narrative
+          </h1>
+          <p className="mt-4 text-sm text-muted-foreground uppercase tracking-widest">
+            Create an account to start writing
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
+
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="sr-only">
-                Username
-              </label>
+              <label htmlFor="username" className="sr-only">Username</label>
               <Input
                 id="username"
-                name="username"
                 type="text"
-                autoComplete="username"
                 required
                 placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
               />
             </div>
             <div>
-              <label htmlFor="email-address" className="sr-only">
-                Email address
-              </label>
+              <label htmlFor="email" className="sr-only">Email</label>
               <Input
-                id="email-address"
-                name="email"
+                id="email"
                 type="email"
-                autoComplete="email"
                 required
                 placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
               />
             </div>
             <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
+              <label htmlFor="password" className="sr-only">Password</label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                autoComplete="new-password"
                 required
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
+                minLength={6}
               />
             </div>
           </div>
 
-          <div>
-            <Button type="submit" className="w-full" isLoading={isLoading}>
-              Sign up
-            </Button>
+          <Button type="submit" className="w-full h-12 text-sm uppercase tracking-widest font-bold" isLoading={isLoading}>
+            Create Account
+          </Button>
+
+          <div className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/login" className="font-bold text-foreground hover:underline underline-offset-4">
+              Sign In
+            </Link>
           </div>
         </form>
       </div>

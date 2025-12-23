@@ -7,61 +7,83 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  /* Pinterest-inspired Minimal Palette */
+  --background: #fafafa;
+  /* Soft off-white */
+  --foreground: #111111;
+  /* Almost black for strong text contrast */
+
   --card: #ffffff;
-  --card-foreground: #000000;
+  --card-foreground: #111111;
+
   --popover: #ffffff;
-  --popover-foreground: #000000;
-  --primary: #000000;
+  --popover-foreground: #111111;
+
+  --primary: #111111;
+  /* Strong action buttons */
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f5;
-  --secondary-foreground: #000000;
+
+  --secondary: #e9e9e9;
+  /* Light gray for secondary buttons */
+  --secondary-foreground: #111111;
+
   --muted: #f4f4f5;
-  --muted-foreground: #71717a;
-  --accent: #f4f4f5;
-  --accent-foreground: #000000;
+  --muted-foreground: #666666;
+  /* Softer gray for metadata */
+
+  --accent: #e60023;
+  /* Subtle nod to Pinterest red, or use a Teal */
+  /* Let's strictly follow 'one accent color' rule but keep it versatile */
+  --accent-color: #0d9488;
+  /* Teal 600 - Calm and focused */
+  --accent-foreground: #ffffff;
+
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --border: #e4e4e7;
+  /* Zinc 200 */
+  --input: #e4e4e7;
+  --ring: #111111;
 
-  --radius: 0px;
-  --radius-sm: 0px;
-  --radius-md: 0px;
-  --radius-lg: 0px;
+  --radius: 0.75rem;
+  /* Modern rounded corners */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #020617;
-    /* slate-950 */
-    --foreground: #f8fafc;
-    /* slate-50 */
+    --background: #09090b;
+    /* Zinc 950 */
+    --foreground: #fafafa;
 
-    --primary: #6366f1;
-    /* indigo-500 */
-    --primary-foreground: #ffffff;
+    --card: #121212;
+    /* Slightly lighter than bg */
+    --card-foreground: #fafafa;
 
-    --secondary: #1e293b;
-    /* slate-800 */
-    --secondary-foreground: #f8fafc;
+    --popover: #121212;
+    --popover-foreground: #fafafa;
 
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    /* slate-400 */
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
 
-    --accent: #1e293b;
-    --accent-foreground: #f8fafc;
+    --secondary: #27272a;
+    --secondary-foreground: #fafafa;
+
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+
+    --accent: #0d9488;
+    --accent-foreground: #fafafa;
 
     --destructive: #7f1d1d;
-    --destructive-foreground: #f8fafc;
+    --destructive-foreground: #fafafa;
 
-    --border: #1e293b;
-    --input: #1e293b;
-    --ring: #6366f1;
+    --border: #27272a;
+    --input: #27272a;
+    --ring: #fafafa;
   }
 }
 
@@ -69,4 +91,25 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography Utils */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-sans);
+  /* Headings in Sans usually look cleaner for UI-heavy blogs */
+  color: var(--foreground);
+  letter-spacing: -0.02em;
+  /* Tighter tracking for modern feel */
+}
+
+/* Post Contents use Serif for readability */
+.prose p {
+  font-family: var(--font-serif);
 }
