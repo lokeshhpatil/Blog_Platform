@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { Post } from "@/types";
@@ -11,12 +12,14 @@ import { CommentsSection } from "@/components/CommentsSection";
 import { relativeDate } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import toast from "react-hot-toast";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function PostDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   
   const { data: post, isLoading } = useQuery({
     queryKey: ["post", id],
@@ -41,12 +44,50 @@ export default function PostDetailPage() {
     }
   });
 
+  const likeMutation = useMutation({
+    mutationFn: async () => {
+      const res = await api.post(`/posts/${id}/like`);
+      return res.data;
+    },
+    onSuccess: (data) => {
+        // Invalidate to refetch fresh state, or we could update cache manually
+        queryClient.invalidateQueries({ queryKey: ["post", id] });
+    },
+    onError: (error: any) => {
+        toast.error("Failed to like post");
+    }
+  });
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: post?.title || "Blog Post",
+          text: "Check out this story!",
+          url: url
+        });
+      } catch (err) {
+        // User cancelled or failed
+      }
+    } else {
+        // Fallback to copy
+        try {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied to clipboard");
+        } catch (err) {
+            toast.error("Failed to copy link");
+        }
+    }
+  };
+
   if (isLoading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground animate-pulse">Loading Story...</div>;
   if (!post) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Story not found</div>;
 
   const authorName = post.author && typeof post.author === 'object' ? post.author.username : 'Unknown';
   const authorId = typeof post.author === 'object' && post.author ? post.author.id : post.author;
-  const isAuthor = user && user.id === authorId;
+  // Ensure we compare strings safely
+  const isAuthor = user && String(user.id) === String(authorId);
   const imageUrl = post.image?.url;
 
   return (
@@ -79,10 +120,20 @@ export default function PostDetailPage() {
            </div>
            
            <div className="flex items-center gap-4 text-muted-foreground">
-             <button className="hover:text-foreground transition-colors"><FiShare2 size={20} /></button>
-             <button className="hover:text-foreground transition-colors"><FiBookmark size={20} /></button>
+             <button 
+                onClick={handleShare}
+                className="hover:text-foreground transition-colors"
+                title="Share"
+             >
+                <FiShare2 size={20} />
+             </button>
+             {/* Deleted Save Button */}
              {isAuthor && (
-               <button onClick={() => { if (confirm("Delete this story?")) deleteMutation.mutate(); }} className="hover:text-destructive transition-colors">
+               <button 
+                  onClick={() => setIsDeleteModalOpen(true)} 
+                  className="hover:text-destructive transition-colors"
+                  title="Delete Story"
+               >
                  <FiTrash2 size={20} />
                </button>
              )}
@@ -123,8 +174,12 @@ export default function PostDetailPage() {
         {/* Engagement Bar */}
         <div className="border-t border-border py-8 flex items-center justify-between mt-12 mb-12">
            <div className="flex gap-8">
-              <button className="flex items-center gap-2 text-muted-foreground hover:text-accent-color transition-colors group">
-                <FiHeart size={24} className="group-hover:fill-current" /> 
+              <button 
+                onClick={() => likeMutation.mutate()}
+                disabled={likeMutation.isPending}
+                className={`flex items-center gap-2 transition-colors group ${post.is_liked ? 'text-red-600' : 'text-muted-foreground hover:text-red-600'}`}
+              >
+                <FiHeart size={24} className={`group-hover:fill-current ${post.is_liked ? 'fill-current' : ''}`} /> 
                 <span className="font-medium">{post.likes_count || 0} Likes</span>
               </button>
               <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
@@ -136,6 +191,16 @@ export default function PostDetailPage() {
         
         <CommentsSection postId={post.id} />
       </div>
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => deleteMutation.mutate()}
+        title="Delete Story"
+        message="Are you sure you want to delete this story? This action cannot be undone."
+        confirmLabel={deleteMutation.isPending ? "Deleting..." : "Delete"}
+        isDestructive={true}
+      />
     </article>
   );
 }
