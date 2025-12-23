@@ -4,8 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { Post } from "@/types";
 import { PostCard } from "@/components/PostCard";
+import { HeroPost } from "@/components/HeroPost";
+import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 
 export default function Home() {
   const { data, isLoading, isError, error } = useQuery({
@@ -17,6 +18,8 @@ export default function Home() {
   });
 
   const posts: Post[] = data?.posts || [];
+  const heroPost = posts[0];
+  const gridPosts = posts.slice(1);
 
   if (isError) {
     return (
@@ -28,30 +31,34 @@ export default function Home() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <div className="flex items-center justify-between border-b pb-4 mb-8">
-        <h1 className="text-xl font-bold tracking-tight uppercase text-muted-foreground text-xs">Latest Stories</h1>
-      </div>
-
+    <div className="bg-white min-h-screen pb-20">
       {isLoading ? (
-        <div className="space-y-8">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex gap-4 animate-pulse">
-               <div className="flex-1 space-y-3">
-                 <div className="h-4 bg-muted w-1/4 rounded" />
-                 <div className="h-6 bg-muted w-3/4 rounded" />
-                 <div className="h-4 bg-muted w-full rounded" />
-               </div>
-               <div className="w-32 h-24 bg-muted rounded hidden md:block" />
-            </div>
-          ))}
-        </div>
+        <div className="container mx-auto px-4 py-20 text-center">Loading...</div>
       ) : (
-        <div className="flex flex-col">
-          {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
-          ))}
-        </div>
+        <>
+          {/* Hero Section */}
+          {heroPost && <HeroPost post={heroPost} />}
+
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+              {/* Main Content - Grid */}
+              <div className="lg:col-span-8">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+                   {gridPosts.map((post) => (
+                     <PostCard key={post.id} post={post} />
+                   ))}
+                 </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="lg:col-span-4">
+                <div className="sticky top-24">
+                  <Sidebar />
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
