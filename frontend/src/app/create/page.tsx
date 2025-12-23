@@ -30,6 +30,7 @@ export default function CreatePostPage() {
       router.push(`/posts/${data.id}`);
     },
     onError: (error: any) => {
+      console.error('Create post error:', error, error.response?.data);
       toast.error(error.response?.data?.msg || "Failed to create post");
     },
   });
