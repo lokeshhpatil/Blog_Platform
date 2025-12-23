@@ -67,6 +67,14 @@ export default function LoginPage() {
                 className="h-12 bg-secondary/30 border-transparent focus:bg-background transition-colors"
               />
             </div>
+            <div className="flex justify-end">
+              <Link
+                href="/forgot-password"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
 
           <Button type="submit" className="w-full h-12 text-sm uppercase tracking-widest font-bold" isLoading={isLoading}>

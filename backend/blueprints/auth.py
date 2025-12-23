@@ -95,25 +95,32 @@ def send_reset_email_sendgrid(to_email:str,reset_url:str,user_name:str=""):
         current_app.logger.warning("SENDGRID_API_KEY not set. Reset URL: %s", reset_url)
         return jsonify({"msg":"problem in sendgrid api env variables"})
     
-    message = Mail(
+    
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #333;">Reset Your Password</h2>
+        <p>We received a request to reset your password. Click the button below to choose a new password.</p>
+        <p style="text-align: center; margin: 30px 0;">
+            <a href="{reset_url}" style="background-color: #000; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Reset Password</a>
+        </p>
+        <p>If the button doesn't work, copy and paste this link into your browser:</p>
+        <p><a href="{reset_url}">{reset_url}</a></p>
+        <p style="color: #666; font-size: 12px; margin-top: 30px;">This link expires in 1 hour. If you did not request a password reset, you can safely ignore this email.</p>
+    </div>
+    """
 
+    message = Mail(
         from_email=(from_email, from_name),
         to_emails=to_email,
-        # from_email=(from_email,from_name),
-        # to_emails=to_email,
-        # subject="Reset Your Password",
-        # html_content=f"""
-        # <p>We received a request to reset your password. Click the link below to choose a new password. This link expires in 1 hour.</p>
-        # <p><a href="{reset_url}">{reset_url}</a></p>
-        # <p>If you did not request a password reset, you can safely ignore this email.</p>
-        # """
+        subject="Reset Your Password",
+        html_content=html_content
     )
 
-    message.template_id = template_id
-    message.dynamic_template_data = {
-        "user_name": user_name or to_email.split("@")[0].capitalize(),
-        "reset_url": reset_url,
-    }
+    # message.template_id = template_id
+    # message.dynamic_template_data = {
+    #     "user_name": user_name or to_email.split("@")[0].capitalize(),
+    #     "reset_url": reset_url,
+    # }
 
     try:
         sg=SendGridAPIClient(api_key)
