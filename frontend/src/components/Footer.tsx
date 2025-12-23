@@ -22,8 +22,6 @@ export function Footer() {
             <ul className="space-y-4 text-sm font-bold tracking-wide uppercase">
               <li><Link href="/" className="hover:text-gray-400 transition-colors">Home</Link></li>
               <li><Link href="/posts" className="hover:text-gray-400 transition-colors">Latest Stories</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Culture</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Tech</Link></li>
             </ul>
           </div>
 
@@ -31,10 +29,10 @@ export function Footer() {
           <div>
             <h4 className="text-xs font-bold tracking-widest uppercase mb-6 text-gray-500">Connect</h4>
             <ul className="space-y-4 text-sm font-bold tracking-wide uppercase">
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Instagram</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Twitter</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">Facebook</Link></li>
-              <li><Link href="#" className="hover:text-gray-400 transition-colors">LinkedIn</Link></li>
+              <li><Link href="https://www.instagram.com/lokesh_p.03/" className="hover:text-gray-400 transition-colors">Instagram</Link></li>
+              <li><Link href="https://x.com/LokeshP66704936" className="hover:text-gray-400 transition-colors">Twitter</Link></li>
+              <li><Link href="https://www.facebook.com/profile.php?id=100069708436659" className="hover:text-gray-400 transition-colors">Facebook</Link></li>
+              <li><Link href="https://www.linkedin.com/in/lokeshhpatil" className="hover:text-gray-400 transition-colors">LinkedIn</Link></li>
             </ul>
           </div>
 
@@ -55,10 +53,10 @@ export function Footer() {
             &copy; {new Date().getFullYear()} NARRATIVE. All rights reserved.
           </div>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors"><FaFacebookF /></a>
-            <a href="#" className="hover:text-white transition-colors"><FaTwitter /></a>
-            <a href="#" className="hover:text-white transition-colors"><FaInstagram /></a>
-            <a href="#" className="hover:text-white transition-colors"><FaLinkedinIn /></a>
+            <a href="https://www.facebook.com/profile.php?id=100069708436659" className="hover:text-white transition-colors"><FaFacebookF /></a>
+            <a href="https://x.com/LokeshP66704936" className="hover:text-white transition-colors"><FaTwitter /></a>
+            <a href="https://www.instagram.com/lokesh_p.03/" className="hover:text-white transition-colors"><FaInstagram /></a>
+            <a href="https://www.linkedin.com/in/lokeshhpatil" className="hover:text-white transition-colors"><FaLinkedinIn /></a>
           </div>
         </div>
       </div>
