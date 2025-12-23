@@ -64,7 +64,16 @@ export default function PostDetailPage() {
                <span className="font-medium text-foreground text-sm">{authorName}</span>
                <div className="flex items-center gap-2 text-xs text-muted-foreground">
                  <time dateTime={post.created_at}>
-                  {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                  {(() => {
+                    try {
+                      const date = new Date(post.created_at);
+                      // Check if date is valid
+                      if (isNaN(date.getTime())) return "Unknown date";
+                      return formatDistanceToNow(date, { addSuffix: true });
+                    } catch (e) {
+                      return "Just now";
+                    }
+                  })()}
                  </time>
                  <span>•</span>
                  <span>{Math.ceil(post.body.length / 200)} min read</span>
