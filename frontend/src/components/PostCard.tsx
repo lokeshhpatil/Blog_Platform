@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Post } from "@/types";
 import { FiArrowUpRight, FiHeart } from "react-icons/fi";
+import { formatDate } from "@/lib/utils";
 
 interface PostCardProps {
   post: Post;
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const authorName = typeof post.author === 'object' ? post.author.username : 'Unknown';
+  const authorName = post.author && typeof post.author === 'object' ? post.author.username : 'Unknown';
   const imageUrl = post.image?.url;
 
   return (
@@ -35,8 +36,8 @@ export function PostCard({ post }: PostCardProps) {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
           <span>{authorName}</span>
-          <time dateTime={post.created_at}>
-             {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+          <time dateTime={post.created_at?.toString()}>
+             {formatDate(post.created_at, 'short')}
           </time>
         </div>
 

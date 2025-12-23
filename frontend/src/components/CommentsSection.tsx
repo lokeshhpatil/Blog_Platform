@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/Button";
-import { formatDistanceToNow } from "date-fns";
+import { relativeDate } from "@/lib/utils";
 import toast from "react-hot-toast";
 
 interface Comment {
@@ -90,7 +90,7 @@ export function CommentsSection({ postId }: CommentsSectionProps) {
                   {comment.author.username[0].toUpperCase()}
                 </div>
                 <span className="text-sm font-medium">{comment.author.username}</span>
-                <span className="text-xs text-muted-foreground">• {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}</span>
+                <span className="text-xs text-muted-foreground">• {relativeDate(comment.created_at)}</span>
               </div>
               <p className="text-sm font-serif leading-relaxed text-foreground/90">{comment.body}</p>
             </div>
