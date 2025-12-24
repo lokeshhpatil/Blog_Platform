@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import { CommentsSection } from "@/components/CommentsSection";
 import { LikeButton } from "@/components/LikeButton";
 import { DeletePostButton } from "@/components/DeletePostButton";
+import { EditPostButton } from "@/components/EditPostButton";
 
 function PostDetailContent() {
   const params = useParams();
@@ -68,6 +69,7 @@ function PostDetailContent() {
             
             {/* Admin/Author Actions */}
             <div className="flex items-center gap-2">
+                 <EditPostButton postId={post.id} authorId={authorId} />
                  <DeletePostButton postId={post.id} authorId={authorId} />
             </div>
         </div>
