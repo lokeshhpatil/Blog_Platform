@@ -10,7 +10,6 @@ import secrets
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import os
-import urllib.parse
 
 auth_bp = Blueprint("auth",__name__)
 
@@ -151,11 +150,8 @@ def request_reset_password():
         }})
 
         frontend_base = os.getenv("FRONTEND_URL", "http://localhost:3000").rstrip("/")
-        encoded_email = urllib.parse.quote(email)
-        reset_path = f"/reset-password?token={raw_token}&email={encoded_email}"
+        reset_path = f"/reset-password?token={raw_token}&email={email}"
         reset_url = frontend_base + reset_path
-        
-        print(f"DEBUG: Generated Reset URL: {reset_url}")
 
         try:
             send_reset_email_sendgrid(email, reset_url)
@@ -185,6 +181,9 @@ def reset_password():
     expires_at = user.get("reset_password_expires")
     if not stored_hash or not expires_at:
         return jsonify({"msg": "Invalid token or expired"}), 400
+
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=datetime.timezone.utc)
 
     if expires_at < _not_utc():
         return jsonify({"msg": "Token expired"}), 400
