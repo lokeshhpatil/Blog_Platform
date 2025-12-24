@@ -10,6 +10,10 @@ import { FiArrowLeft, FiUser, FiCalendar } from "react-icons/fi";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { CommentsSection } from "@/components/CommentsSection";
+import { LikeButton } from "@/components/LikeButton";
+import { DeletePostButton } from "@/components/DeletePostButton";
+
 function PostDetailContent() {
   const params = useParams();
   const router = useRouter();
@@ -52,19 +56,27 @@ function PostDetailContent() {
   }
 
   const authorName = typeof post.author === 'object' ? post.author.username : 'Unknown';
+  const authorId = typeof post.author === 'object' ? post.author.id : (typeof post.author === 'string' ? post.author : '');
 
   return (
     <article className="container max-w-4xl mx-auto px-4 py-12">
-        <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-8 group transition-colors">
-            <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-            Back to Posts
-        </Link>
+        <div className="flex justify-between items-center mb-8">
+            <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground group transition-colors">
+                <FiArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+                Back to Posts
+            </Link>
+            
+            {/* Admin/Author Actions */}
+            <div className="flex items-center gap-2">
+                 <DeletePostButton postId={post.id} authorId={authorId} />
+            </div>
+        </div>
         
         <header className="mb-10 text-center space-y-6">
             <h1 className="text-4xl md:text-5xl font-serif font-bold leading-tight text-foreground">
                 {post.title}
             </h1>
-             <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+             <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                     <FiUser />
                     <span className="font-medium text-foreground">{authorName}</span>
@@ -72,6 +84,14 @@ function PostDetailContent() {
                 <div className="flex items-center gap-2">
                     <FiCalendar />
                     <time>{formatDate(post.created_at)}</time>
+                </div>
+                {/* Like Button in header metadata */}
+                <div className="flex items-center">
+                    <LikeButton 
+                        postId={post.id} 
+                        initialLikes={post.likes_count || 0} 
+                        initialIsLiked={post.is_liked || false} 
+                    />
                 </div>
             </div>
         </header>
@@ -101,6 +121,12 @@ function PostDetailContent() {
                 </div>
             </div>
         )}
+
+        {/* Comments Section */}
+        <div className="mt-12 border-t pt-12">
+            <CommentsSection postId={post.id} />
+        </div>
+
     </article>
   );
 }
